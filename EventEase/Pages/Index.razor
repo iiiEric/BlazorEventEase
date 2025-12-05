@@ -11,7 +11,7 @@
 </Virtualize>
 
 @code {
-    private List<EventModel> events = Enumerable.Range(1, 1000).Select(i =>
+    private List<EventModel> events = Enumerable.Range(1, 100).Select(i =>
     new EventModel { Name=$"Evento {i}", Date=DateTime.Now.AddDays(i), Location="Madrid" }
     ).ToList();
 }
