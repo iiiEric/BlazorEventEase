@@ -1,22 +1,17 @@
 ﻿@page "/"
+@using EventEase.Models
 
 <h2>Lista de eventos</h2>
 
-
-@foreach (var ev in events.Select((value, index) => new { value, index }))
-{
-    <EventCard EventName="@ev.value.Name"
-               EventDate="@ev.value.Date"
-               EventLocation="@ev.value.Location" />
-
-    <!-- Enlace de navegación con el id dinámico -->
-    <a href="/eventdetails/@(ev.index + 1)">Ver detalles</a>
-    <br />
-}
+<Virtualize Items="events" Context="ev">
+    <EventCard EventName="@ev.Name" EventDate="@ev.Date" EventLocation="@ev.Location" />
+    <a href="@($"/eventdetails/{events.IndexOf(ev) + 1}")">
+    Ver detalles
+    </a>
+</Virtualize>
 
 @code {
-    private List<EventModel> events = new() {
-        new EventModel { Name="Conferencia Tech", Date=DateTime.Now.AddDays(5), Location="Barcelona" },
-        new EventModel { Name="Networking Empresarial", Date=DateTime.Now.AddDays(10), Location="Madrid" }
-    };
+    private List<EventModel> events = Enumerable.Range(1, 1000).Select(i =>
+    new EventModel { Name=$"Evento {i}", Date=DateTime.Now.AddDays(i), Location="Madrid" }
+    ).ToList();
 }
