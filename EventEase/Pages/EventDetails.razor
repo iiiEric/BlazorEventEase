@@ -1,37 +1,52 @@
 @page "/eventdetails/{id:int}"
+@using EventEase.Data
 @using EventEase.Models
-@inject NavigationManager Navigation
-
-<h3>Detalles del evento</h3>
+@inject UserSessionService SessionService
+@inject NavigationManager NavManager
 
 @if (selectedEvent != null)
 {
-    <div class="event-details">
-        <p><strong>Nombre:</strong> @selectedEvent.Name</p>
-        <p><strong>Fecha:</strong> @selectedEvent.Date.ToShortDateString()</p>
-        <p><strong>Ubicación:</strong> @selectedEvent.Location</p>
-    </div>
+    <h3>@selectedEvent.Name</h3>
+    <p>@selectedEvent.Date.ToShortDateString()</p>
+    <p>@selectedEvent.Location</p>
+
+    <h4>Usuarios registrados</h4>
+    @if (selectedEvent.RegisteredUsers.Any())
+    {
+        <ul>
+            @foreach (var user in selectedEvent.RegisteredUsers)
+            {
+                <li>@user.Name (@user.Email)</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No hay usuarios registrados todavía.</p>
+    }
+
+    <a href="@($"/register/{Id}")">Registrarse en este evento</a>
+
+    <br />
+    <!-- Botón volver atrás -->
+    <button @onclick="GoBack">⬅️ Volver a la lista</button>
 }
 else
 {
-    <p>⚠️ El evento solicitado no existe.</p>
-    <a href="/">Volver a la lista de eventos</a>
+    <p>Evento no encontrado.</p>
 }
 
 @code {
     [Parameter] public int Id { get; set; }
-
     private EventModel? selectedEvent;
 
     protected override void OnInitialized()
     {
-        // Datos simulados (en un caso real vendrían de un servicio en Data/EventService)
-        var events = new List<EventModel>
-        {
-            new EventModel { Name="Conferencia Tech", Date=DateTime.Now.AddDays(5), Location="Barcelona" },
-            new EventModel { Name="Networking Empresarial", Date=DateTime.Now.AddDays(10), Location="Madrid" }
-        };
+        selectedEvent = SessionService.GetEventById(Id);
+    }
 
-        selectedEvent = events.FirstOrDefault(e => events.IndexOf(e) + 1 == Id);
+    private void GoBack()
+    {
+        NavManager.NavigateTo("/");
     }
 }

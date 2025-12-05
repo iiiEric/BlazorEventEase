@@ -1,0 +1,30 @@
+@page "/attendance/{eventId:int}"
+@inject UserSessionService SessionService
+@using EventEase.Data
+@using EventEase.Models
+
+<h3>Lista de asistencia</h3>
+
+@code {
+    [Parameter] public int EventId { get; set; }
+    private EventModel? selectedEvent;
+
+    protected override void OnInitialized()
+    {
+        selectedEvent = SessionService.GetEventById(EventId);
+    }
+}
+
+@if (selectedEvent != null && selectedEvent.RegisteredUsers.Any())
+{
+    <ul>
+        @foreach (var user in selectedEvent.RegisteredUsers)
+        {
+            <li>@user.Name (@user.Email)</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No hay usuarios registrados todavía.</p>
+}

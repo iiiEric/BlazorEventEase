@@ -1,25 +1,44 @@
-@page "/register"
+@page "/register/{eventId:int}"
+@using EventEase.Data
+@using EventEase.Models
+@inject UserSessionService SessionService
+@inject NavigationManager NavManager
 
 <h3>Registro de evento</h3>
 
-<form>
+<EditForm Model="registerModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
     <div>
         <label>Nombre:</label>
-        <input type="text" @bind="userName" />
+        <InputText @bind-Value="registerModel.Name" />
     </div>
     <div>
         <label>Email:</label>
-        <input type="email" @bind="userEmail" />
+        <InputText @bind-Value="registerModel.Email" />
     </div>
     <button type="submit">Enviar registro</button>
-</form>
+</EditForm>
 
-<p>👤 Nombre ingresado: @userName</p>
-<p>📧 Email ingresado: @userEmail</p>
+<p>@statusMessage</p>
 
-<a href="/">Volver a la lista de eventos</a>
+<!-- Botón volver atrás -->
+<button @onclick="GoBack">⬅️ Volver al detalle</button>
 
 @code {
-    private string userName { get; set; } = string.Empty;
-    private string userEmail { get; set; } = string.Empty;
+    [Parameter] public int EventId { get; set; }
+    private RegisterModel registerModel = new();
+    private string statusMessage = string.Empty;
+
+    private void HandleValidSubmit()
+    {
+        SessionService.RegisterUser(EventId, registerModel);
+        statusMessage = $"✅ Usuario {registerModel.Name} registrado correctamente.";
+    }
+
+    private void GoBack()
+    {
+        NavManager.NavigateTo($"/eventdetails/{EventId}");
+    }
 }
