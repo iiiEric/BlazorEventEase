@@ -1,0 +1,25 @@
+@page "/register"
+
+<h3>Registro de evento</h3>
+
+<form>
+    <div>
+        <label>Nombre:</label>
+        <input type="text" @bind="userName" />
+    </div>
+    <div>
+        <label>Email:</label>
+        <input type="email" @bind="userEmail" />
+    </div>
+    <button type="submit">Enviar registro</button>
+</form>
+
+<p>👤 Nombre ingresado: @userName</p>
+<p>📧 Email ingresado: @userEmail</p>
+
+<a href="/">Volver a la lista de eventos</a>
+
+@code {
+    private string userName { get; set; } = string.Empty;
+    private string userEmail { get; set; } = string.Empty;
+}
